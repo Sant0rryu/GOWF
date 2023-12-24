@@ -1,0 +1,13 @@
+[Unit]
+Description=Fake client for GOWF.
+
+[Service]
+Type=simple
+RemainAfterExit=yes
+
+ExecStart=/usr/bin/env bash /opt/run_client.sh %i_client 
+RuntimeMaxSec=180s
+Restart=always 
+
+[Install]
+WantedBy=multi-user.target

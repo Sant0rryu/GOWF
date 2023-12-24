@@ -1,0 +1,27 @@
+[Unit]
+Description=Create AP and Client for GOWF.
+#Requires=gowf_ns.service
+#After=gowd_ns.service
+#PartOf=gowf.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+
+#ExecStart=/usr/sbin/modprobe mac80211_hwsim radios=10
+
+ExecStart=/usr/bin/env ip netns add %i
+ExecStart=/usr/bin/env ip netns add %i_client
+ExecStart=/usr/bin/env bash /opt/add_virtual_interface_in_ns.sh %i
+ExecStart=/usr/bin/env bash /opt/add_virtual_interface_in_ns.sh %i_client
+ExecStart=/usr/bin/env bash /opt/configure_ap.sh %i
+ExecStart=/usr/bin/env ip netns exec %i bash -c "hostapd -B /opt/%i.conf"
+ExecStart=/usr/bin/env ip netns exec %i bash -c "dnsmasq --dhcp-range=192.168.40.100,192.168.40.254"
+
+ExecStop=/usr/bin/env ip netns delete %i
+ExecStop=/usr/bin/env ip netns delete %i_client
+#ExecStop=/usr/sbin/modprobe mac80211_hwsim -r
+ExecStop=/usr/sbin/env rm /opt/*.conf
+
+[Install]
+WantedBy=multi-user.target

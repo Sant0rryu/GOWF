@@ -1,0 +1,28 @@
+[Unit]
+Description=GOWF service.
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/modprobe mac80211_hwsim radios=10
+ExecStart=/usr/bin/systemctl start gowf_ap@wpa
+ExecStart=/usr/bin/systemctl start gowf_client@wpa
+ExecStart=/usr/bin/systemctl start gowf_ap@wpa2
+ExecStart=/usr/bin/systemctl start gowf_client@wpa2
+ExecStart=/usr/bin/systemctl start gowf_ap@wep
+ExecStart=/usr/bin/systemctl start gowf_client@wep
+
+
+
+
+ExecStop=/usr/bin/systemctl stop gowf_ap@wpa
+ExecStop=/usr/bin/systemctl stop gowf_client@wpa
+ExecStop=/usr/bin/systemctl stop gowf_ap@wpa2
+ExecStop=/usr/bin/systemctl stop gowf_client@wpa2
+ExecStop=/usr/bin/systemctl stop gowf_ap@wep
+ExecStop=/usr/bin/systemctl stop gowf_client@wep
+ExecStop=/usr/sbin/modprobe mac80211_hwsim -r
+
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,32 @@
+---
+- name: Move files to remote host
+  hosts: all
+  become: true
+  tasks:
+    - copy:
+        src: "{{ item }}"
+        dest: "/etc/systemd/system/"
+      with_fileglob: 
+      - "*.service"
+    - copy:
+        src: "files/setup/"
+        dest: "/opt/"
+
+- name: Install packages
+  hosts: all
+  become: true
+  tasks:
+    - ansible.builtin.package:
+        name:
+        - hostapd
+        state: latest
+        update_cache: true
+
+- name: Launch Gowf
+  hosts: all
+  become: true
+  tasks:
+    - systemd:
+        name: gowf
+        state: started
+        enabled: yes
